@@ -11,6 +11,7 @@ import {
   WalletCards,
 } from "lucide-react";
 
+import { AppNav } from "@/components/app-nav";
 import {
   Card,
   CardContent,
@@ -202,12 +203,11 @@ function Summary() {
   return (
     <main className="dark min-h-screen bg-background px-4 py-8 text-foreground sm:px-6 lg:px-8">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
+        <AppNav />
+
         <header className="flex flex-col gap-4">
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
-                Expense tracker
-              </p>
               <h1 className="mt-1 text-3xl font-semibold tracking-tight">
                 Monthly summary
               </h1>

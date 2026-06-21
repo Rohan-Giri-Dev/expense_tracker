@@ -12,8 +12,10 @@ import {
   ListChecks,
   Loader2,
   Plus,
+  Trash2,
 } from "lucide-react";
 
+import { AppNav } from "@/components/app-nav";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -64,6 +66,7 @@ function TransactionPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const totals = useMemo(() => {
     return transactions.reduce(
@@ -156,6 +159,42 @@ function TransactionPage() {
     }
   };
 
+  const deleteTransaction = async function (id: string) {
+    const shouldDelete = window.confirm(
+      "Are you sure you want to delete this transaction?",
+    );
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    try {
+      setError("");
+      setDeletingId(id);
+
+      const res = await fetch(`/api/transactions/${id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        return setError(
+          data.message || data.error || "Failed to delete transaction",
+        );
+      }
+
+      setTransactions((currentTransactions) =>
+        currentTransactions.filter((transaction) => transaction.id !== id),
+      );
+    } catch (error) {
+      console.error("Failed to delete transaction", error);
+      setError("Failed to delete transaction");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   useEffect(() => {
     let ignore = false;
 
@@ -201,10 +240,9 @@ function TransactionPage() {
   return (
     <main className="dark min-h-screen bg-background px-4 py-8 text-foreground sm:px-6 lg:px-8">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
+        <AppNav />
+
         <header className="flex flex-col gap-2">
-          <p className="text-sm font-medium text-muted-foreground">
-            Expense tracker
-          </p>
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
               <h1 className="text-3xl font-semibold tracking-tight">
@@ -215,15 +253,21 @@ function TransactionPage() {
                 place.
               </p>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={getTransactions}
-              disabled={isLoading}
-            >
-              {isLoading ? <Loader2 className="animate-spin" /> : <ListChecks />}
-              Refresh
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={getTransactions}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <ListChecks />
+                )}
+                Refresh
+              </Button>
+            </div>
           </div>
         </header>
 
@@ -400,18 +444,35 @@ function TransactionPage() {
                             )}
                           </p>
                         </div>
-                        <p
-                          className={`text-lg font-semibold ${
-                            transaction.type === TransactionType.INCOME
-                              ? "text-emerald-700 dark:text-emerald-300"
-                              : "text-red-700 dark:text-red-300"
-                          }`}
-                        >
-                          {transaction.type === TransactionType.INCOME
-                            ? "+"
-                            : "-"}
-                          Rs. {formatMoney(transaction.amount)}
-                        </p>
+                        <div className="flex items-center gap-3">
+                          <p
+                            className={`text-lg font-semibold ${
+                              transaction.type === TransactionType.INCOME
+                                ? "text-emerald-700 dark:text-emerald-300"
+                                : "text-red-700 dark:text-red-300"
+                            }`}
+                          >
+                            {transaction.type === TransactionType.INCOME
+                              ? "+"
+                              : "-"}
+                            Rs. {formatMoney(transaction.amount)}
+                          </p>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            aria-label={`Delete ${transaction.title}`}
+                            title="Delete transaction"
+                            disabled={deletingId === transaction.id}
+                            onClick={() => void deleteTransaction(transaction.id)}
+                          >
+                            {deletingId === transaction.id ? (
+                              <Loader2 className="animate-spin" />
+                            ) : (
+                              <Trash2 />
+                            )}
+                          </Button>
+                        </div>
                       </div>
                       {index < transactions.length - 1 && <Separator />}
                     </div>
