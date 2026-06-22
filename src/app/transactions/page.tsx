@@ -345,7 +345,7 @@ function TransactionPage() {
                       onChange={(e) =>
                         setType(e.target.value as TransactionType)
                       }
-                      className="h-8 w-full rounded-lg border border-input bg-background px-2.5 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+                      className="h-8 w-full rounded-lg border border-input bg-background px-2.5 text-sm text-foreground outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
                     >
                       <option value="">Select type</option>
                       <option value={TransactionType.EXPENSE}>Expense</option>
