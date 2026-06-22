@@ -26,6 +26,28 @@ This project is focused on learning the core flow of a CRUD-style app: collectin
 - shadcn/ui style components
 - Lucide React icons
 
+## Screenshots
+
+Save the transaction page screenshot as:
+
+```text
+public/screenshots/transactions.png
+```
+
+Save the summary page screenshot as:
+
+```text
+public/screenshots/summary.png
+```
+
+### Transactions Page
+
+![Transactions page screenshot](./public/screenshots/transactions.png)
+
+### Summary Page
+
+![Summary page screenshot](./public/screenshots/summary.png)
+
 ## Project Structure
 
 ```text
